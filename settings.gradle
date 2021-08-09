@@ -1,0 +1,2 @@
+rootProject.name = "DJIVideoStreamAnalysis"
+include ':app'
