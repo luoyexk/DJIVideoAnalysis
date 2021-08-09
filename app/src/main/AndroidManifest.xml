@@ -34,6 +34,7 @@
         android:theme="@style/Theme.DJIVideoStreamAnalysis">
         <activity
             android:name=".ml.MLActivity"
+            android:configChanges="screenLayout"
             android:screenOrientation="userLandscape" />
         <activity
             android:name=".opencv.OpenCVActivity"
