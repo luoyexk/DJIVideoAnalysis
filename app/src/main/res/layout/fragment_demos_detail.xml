@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextureView
+            android:id="@+id/play_view"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            app:layout_constraintDimensionRatio="W, 4:3"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <com.google.mlkit.vision.demo.GraphicOverlay
+            android:id="@+id/graphic_overlay"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="@id/play_view"
+            app:layout_constraintEnd_toEndOf="@id/play_view"
+            app:layout_constraintStart_toStartOf="@id/play_view"
+            app:layout_constraintTop_toTopOf="@id/play_view" />
+
+        <ListView
+            android:id="@+id/list_view"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/play_view"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:listitem="@android:layout/simple_list_item_1" />
+
+        <FrameLayout
+            android:id="@+id/rect_container"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="@id/play_view"
+            app:layout_constraintEnd_toEndOf="@id/play_view"
+            app:layout_constraintStart_toStartOf="@id/play_view"
+            app:layout_constraintTop_toTopOf="@id/play_view" />
+
+        <TextView
+            android:id="@+id/tv_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#dd000000"
+            app:layout_constraintBottom_toBottomOf="@id/play_view"
+            app:layout_constraintEnd_toEndOf="@id/play_view" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

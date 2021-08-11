@@ -1,8 +1,10 @@
 package com.zwl.djivideostreamanalysis.utils
 
+import dji.sdk.camera.Camera
 import dji.sdk.products.Aircraft
 import dji.sdk.sdkmanager.DJISDKManager
 
 object DJISDKTool {
-    fun aircraftOrNull(): Aircraft? = DJISDKManager.getInstance().product as? Aircraft
+    val aircraft: Aircraft? get() = DJISDKManager.getInstance().product as? Aircraft
+    val camera: Camera? get() = aircraft?.camera
 }

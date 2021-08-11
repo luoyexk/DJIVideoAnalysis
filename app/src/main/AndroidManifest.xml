@@ -35,10 +35,14 @@
         <activity
             android:name=".ml.MLActivity"
             android:configChanges="screenLayout"
-            android:screenOrientation="userLandscape" />
+            android:launchMode="singleTop"
+            android:screenOrientation="userLandscape"
+            android:theme="@style/Theme.MaterialComponents.Light.NoActionBar" />
         <activity
             android:name=".opencv.OpenCVActivity"
-            android:screenOrientation="userLandscape" />
+            android:launchMode="singleTop"
+            android:screenOrientation="userLandscape"
+            android:theme="@style/Theme.MaterialComponents.Light.NoActionBar" />
 
         <uses-library
             android:name="org.apache.http.legacy"

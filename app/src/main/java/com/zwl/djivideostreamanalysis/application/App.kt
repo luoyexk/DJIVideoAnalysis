@@ -2,6 +2,9 @@ package com.zwl.djivideostreamanalysis.application
 
 import android.app.Application
 import android.content.Context
+import com.zwl.djivideostreamanalysis.application.task.DJIHelperTask
+import com.zwl.djivideostreamanalysis.application.task.LifecycleTask
+import com.zwl.djivideostreamanalysis.application.task.TimberTask
 
 class App : Application() {
 

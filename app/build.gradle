@@ -99,7 +99,6 @@ dependencies {
 
     // ConstraintLayout
     implementation "androidx.constraintlayout:constraintlayout:$constraintLayoutVersion"
-
     implementation "com.google.android.material:material:$materialVersion"
 
     // DJI
@@ -110,20 +109,9 @@ dependencies {
         exclude group: 'com.amap.api'
     })
     compileOnly "com.dji:dji-sdk-provided:$djiSdkVersion"
-    implementation("com.github.dji-sdk:Mobile-UXSDK-Beta-Android:$djiUXBeta", {
-//        exclude module: 'android-uxsdk-beta-cameracore'
-        exclude module: 'android-uxsdk-beta-map'
-        exclude module: 'android-uxsdk-beta-training'
-        exclude module: 'android-uxsdk-beta-visualcamera'
-        exclude module: 'android-uxsdk-beta-intelligentflight'
-        exclude module: 'android-uxsdk-beta-hardwareaccessory'
-    })
 
     // Glide
     implementation "com.github.bumptech.glide:glide:$glideVersion"
-
-    // Gson
-    implementation "com.google.code.gson:gson:$gsonVersion"
 
     // Kotlin Coroutines
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion"
@@ -148,5 +136,15 @@ dependencies {
 
     // lottie
     implementation 'com.airbnb.android:lottie:4.0.0'
+
+    // Open CV
+    implementation files('libs/openCVLibrary451-release.aar')
+
+    // Google ML
+    implementation 'com.google.mlkit:image-labeling:17.0.5'
+    implementation 'com.google.mlkit:image-labeling-custom:16.3.1'
+    implementation 'com.google.guava:guava:27.1-android'
+    implementation 'com.google.mlkit:pose-detection:17.0.1-beta4'
+    implementation 'com.google.mlkit:pose-detection-accurate:17.0.1-beta4'
 
 }

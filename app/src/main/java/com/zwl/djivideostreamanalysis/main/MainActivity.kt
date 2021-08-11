@@ -1,10 +1,15 @@
 package com.zwl.djivideostreamanalysis.main
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.commit
+import androidx.lifecycle.lifecycleScope
 import com.zwl.djivideostreamanalysis.R
+import com.zwl.djivideostreamanalysis.databinding.ActivityMainBinding
 import com.zwl.djivideostreamanalysis.utils.DJISDKTool
 import dji.common.error.DJIError
 import dji.common.error.DJISDKError
@@ -12,73 +17,92 @@ import dji.sdk.base.BaseComponent
 import dji.sdk.base.BaseProduct
 import dji.sdk.sdkmanager.DJISDKInitEvent
 import dji.sdk.sdkmanager.DJISDKManager
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlin.concurrent.thread
 
 class MainActivity : AppCompatActivity(), DJISDKManager.SDKManagerCallback {
 
-    private val tvLog by lazy { findViewById<TextView>(R.id.tv_log) }
-    private val animUtil by lazy { MainActivityAnimationUtil(this) }
+    private val animUtil by lazy { MainActivityAnimationUtil(findViewById(R.id.animationView)) }
+    private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+        requestPermissions()
         registerSDK()
     }
 
+    private fun requestPermissions() {
+        if (PERMISSIONS.any { checkSelfPermission(it) != PackageManager.PERMISSION_GRANTED }) {
+            requestPermissions(PERMISSIONS, 12345)
+        }
+    }
+
     private fun registerSDK() {
-        thread(name = "dji-init-thread") {
-            DJISDKManager.getInstance().registerApp(this.application, this)
+        lifecycleScope.launch(Dispatchers.Default) {
+            DJISDKManager.getInstance().registerApp(application, this@MainActivity)
         }
     }
 
     private fun showDemo() {
-        runOnUiThread {
-            supportFragmentManager.commit {
-                setCustomAnimations(R.anim.core_push_up_in, R.anim.core_push_up_out)
-                replace(R.id.fragment_container, DemoFragment())
-            }
+        if (supportFragmentManager.findFragmentByTag("demo") != null) {
+            return
+        }
+        supportFragmentManager.commit {
+            setCustomAnimations(R.anim.core_push_up_in, R.anim.core_push_up_out)
+            replace(R.id.fragment_container, DemoFragment(), "demo")
         }
     }
 
     private fun removeDemo() {
-        supportFragmentManager.popBackStack()
+        supportFragmentManager.findFragmentByTag("demo")?.let {
+            supportFragmentManager.commit {
+                setCustomAnimations(R.anim.core_push_up_in, R.anim.core_push_up_out)
+                remove(it)
+            }
+        }
     }
 
     private fun updateTitle(displayName: String?) {
-        runOnUiThread {
-            title = displayName
-        }
+        title = displayName
     }
 
     private fun updateLog(text: String) {
-        runOnUiThread { tvLog.append("\n$text") }
+        binding.tvLog.append("\n$text")
     }
 
-
+    //region dji register callback
     override fun onRegister(p0: DJIError?) {
-        when (p0) {
-            DJISDKError.REGISTRATION_SUCCESS -> {
-                DJISDKManager.getInstance().startConnectionToProduct()
-                updateTitle("Wait for connection")
+        runOnUiThread {
+            when (p0) {
+                DJISDKError.REGISTRATION_SUCCESS -> {
+                    DJISDKManager.getInstance().startConnectionToProduct()
+                    updateTitle("Wait for connection")
+                }
+                else -> {
+                    updateTitle("Register error")
+                    updateLog(p0?.toString().orEmpty())
+                }
             }
-            else -> {
-                updateTitle("Register error")
-                updateLog(p0?.toString().orEmpty())
-            }
+            animUtil.showWaiting()
         }
-        animUtil.showWaiting()
     }
 
     override fun onProductDisconnect() {
-        updateTitle(getString(R.string.fpv_tip_disconnect))
-        removeDemo()
-        animUtil.showWaiting()
+        runOnUiThread {
+            updateTitle(getString(R.string.fpv_tip_disconnect))
+            removeDemo()
+            animUtil.showWaiting()
+        }
     }
 
     override fun onProductConnect(p0: BaseProduct?) {
-        updateTitle(DJISDKTool.aircraftOrNull()?.model?.displayName)
-        showDemo()
-        animUtil.hideWaiting()
+        runOnUiThread {
+            animUtil.hideWaiting()
+            updateTitle(DJISDKTool.aircraft?.model?.displayName)
+            showDemo()
+        }
     }
 
     override fun onProductChanged(p0: BaseProduct?) {
@@ -89,12 +113,22 @@ class MainActivity : AppCompatActivity(), DJISDKManager.SDKManagerCallback {
         p1: BaseComponent?,
         p2: BaseComponent?
     ) {
+        runOnUiThread {
+            showDemo()
+        }
     }
 
     override fun onInitProcess(p0: DJISDKInitEvent?, p1: Int) {
-        updateTitle("Loading...")
+        runOnUiThread {
+            updateTitle("Loading...")
+        }
     }
 
     override fun onDatabaseDownloadProgress(current: Long, total: Long) {
     }
+    //endregion
 }
+
+val PERMISSIONS = arrayOf(
+    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+)
